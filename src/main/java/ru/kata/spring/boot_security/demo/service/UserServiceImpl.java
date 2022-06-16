@@ -3,7 +3,10 @@ package ru.kata.spring.boot_security.demo.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
@@ -30,23 +33,22 @@ public class UserServiceImpl implements UserService {
         return new HashSet<>(roleRepository.findAll());
     }
 
+    @Transactional
     @Override
-    public void add(User user, Set<Role> roles) {
+    public void createUpdate(User user, Set<Role> roles) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(roles);
         userRepository.save(user);
     }
 
-    @Override
-    public void change(User user,Set<Role> roles) {
-        user.setRoles(roles);
-        userRepository.save(user);
-    }
-
+    @Transactional
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email);

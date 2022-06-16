@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
-public class UserController {
+public class AdminUserController {
 
     private final UserService userService;
 
@@ -36,13 +36,13 @@ public class UserController {
 
     @PostMapping("admin/new")
     public String addUser(User user, @RequestParam("listRoles") Set<Role> roles) {
-        userService.add(user, roles);
+        userService.createUpdate(user, roles);
         return "redirect:/admin";
     }
 
     @PostMapping("admin/edit")
     public String update(@ModelAttribute("user") User user, @RequestParam("listRoles") Set<Role> roles) {
-        userService.change(user, roles);
+        userService.createUpdate(user, roles);
         return "redirect:/admin";
     }
 
