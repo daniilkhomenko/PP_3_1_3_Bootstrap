@@ -3,7 +3,6 @@ package ru.kata.spring.boot_security.demo.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getAllUsers() {
@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void createUpdate(User user, Set<Role> roles) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(roles);
         userRepository.save(user);
